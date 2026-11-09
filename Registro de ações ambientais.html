@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f7f2">
+  <title>Raiz | Registro de ações ambientais</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20342a;
+      --muted: #7d8b81;
+      --line: #e6ece5;
+      --paper: #fff;
+      --canvas: #f4f7f2;
+      --green: #2e7d52;
+      --green-dark: #22623f;
+      --green-soft: #e8f3e9;
+      --lime: #a4c85a;
+      --blue: #5986a3;
+      --blue-soft: #eaf2f7;
+      --amber: #c58a3d;
+      --amber-soft: #fbf2e5;
+      --red: #c7675d;
+      --red-soft: #fbefed;
+      --shadow: 0 12px 32px rgb(34 57 40 / 5%);
+    }
+    * { box-sizing: border-box; }
+    html { overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .app { min-height: 100vh; }
+    .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 4; display: flex; width: 246px; flex-direction: column; padding: 27px 17px 20px; border-right: 1px solid var(--line); background: var(--paper); }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px; text-decoration: none; }
+    .brand-mark { display: grid; width: 40px; height: 40px; place-items: center; border-radius: 14px; background: var(--green); color: white; font-size: 21px; }
+    .brand-name { font-size: 15px; font-weight: 850; letter-spacing: -.4px; }
+    .brand-subtitle { color: var(--muted); font-size: 10px; }
+    .nav-label { margin: 37px 11px 11px; color: #a0aaa2; font-size: 9px; font-weight: 800; letter-spacing: 1.15px; text-transform: uppercase; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-link { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; color: #718076; font-size: 12px; font-weight: 680; text-decoration: none; transition: background .18s, color .18s; }
+    .nav-link:hover, .nav-link.active { background: var(--green-soft); color: var(--green); }
+    .nav-icon { width: 19px; text-align: center; font-size: 15px; }
+    .sidebar-bottom { margin-top: auto; }
+    .tip-card { padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: #fbfdf9; }
+    .tip-icon { margin-bottom: 7px; font-size: 19px; }
+    .tip-card strong { display: block; margin-bottom: 4px; font-size: 11px; }
+    .tip-card p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .main { min-height: 100vh; margin-left: 246px; }
+    .topbar { position: sticky; top: 0; z-index: 3; display: flex; min-height: 68px; align-items: center; justify-content: space-between; gap: 15px; padding: 0 40px; border-bottom: 1px solid var(--line); background: rgb(244 247 242 / 94%); backdrop-filter: blur(12px); }
+    .breadcrumb { color: var(--muted); font-size: 11px; }
+    .breadcrumb strong { color: var(--ink); font-weight: 750; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .today-label { color: #718076; font-size: 11px; }
+    .avatar { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: #e3eedb; color: var(--green); font-size: 11px; font-weight: 800; }
+    .content { width: min(1220px, 100%); margin: 0 auto; padding: 31px 40px 54px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 5px; font-size: clamp(24px, 3vw, 29px); letter-spacing: -1px; }
+    .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 19px; }
+    .page-heading p { margin: 0; color: var(--muted); font-size: 12px; }
+    .primary-button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 8px; padding: 0 15px; border: 0; border-radius: 10px; background: var(--green); box-shadow: 0 5px 13px rgb(46 125 82 / 17%); color: white; font-size: 11px; font-weight: 760; transition: transform .18s, background .18s; }
+    .primary-button:hover { transform: translateY(-1px); background: var(--green-dark); }
+    .welcome-banner { position: relative; display: flex; min-height: 137px; align-items: center; justify-content: space-between; gap: 20px; overflow: hidden; padding: 23px 27px; border: 1px solid #dfeadd; border-radius: 16px; background: linear-gradient(108deg, #eaf4e8 0%, #f6f8ef 54%, #fff 100%); box-shadow: var(--shadow); }
+    .welcome-copy { position: relative; z-index: 1; }
+    .eyebrow { margin-bottom: 5px; color: var(--green); font-size: 9px; font-weight: 850; letter-spacing: 1.15px; text-transform: uppercase; }
+    .welcome-banner h2 { margin: 0 0 5px; font-size: 19px; letter-spacing: -.5px; }
+    .welcome-banner p { max-width: 470px; margin: 0; color: #718076; font-size: 11px; }
+    .banner-art { position: absolute; right: 48px; display: grid; width: 91px; height: 91px; place-items: center; border: 1px solid white; border-radius: 28px; background: rgb(255 255 255 / 73%); box-shadow: 0 8px 22px rgb(46 125 82 / 9%); font-size: 43px; transform: rotate(7deg); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 15px 0 18px; }
+    .stat-card, .panel { border: 1px solid var(--line); border-radius: 13px; background: var(--paper); box-shadow: var(--shadow); }
+    .stat-card { min-height: 99px; padding: 14px 15px; }
+    .stat-head { display: flex; align-items: center; justify-content: space-between; gap: 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
+    .stat-icon { display: grid; width: 29px; height: 29px; flex: 0 0 auto; place-items: center; border-radius: 9px; font-size: 14px; }
+    .stat-icon.green { background: var(--green-soft); color: var(--green); }
+    .stat-icon.blue { background: var(--blue-soft); color: var(--blue); }
+    .stat-icon.lime { background: #f1f5df; color: #799333; }
+    .stat-icon.amber { background: var(--amber-soft); color: var(--amber); }
+    .stat-value { margin-top: 6px; font-size: 23px; font-weight: 820; letter-spacing: -.6px; }
+    .stat-note { margin-left: 5px; color: #9aa49c; font-size: 9px; font-weight: 550; letter-spacing: 0; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(255px, .82fr); gap: 16px; align-items: start; }
+    .panel { overflow: hidden; scroll-margin-top: 84px; }
+    .panel + .panel { margin-top: 16px; }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .panel-header h2 { margin: 0; font-size: 13px; font-weight: 780; }
+    .panel-header p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+    .text-button { padding: 5px; border: 0; background: transparent; color: var(--green); font-size: 10px; font-weight: 760; text-decoration: none; white-space: nowrap; }
+    .chart-wrap { padding: 15px 18px 12px; }
+    .chart-summary { display: flex; align-items: baseline; gap: 7px; margin-bottom: 13px; }
+    .chart-summary strong { font-size: 19px; letter-spacing: -.5px; }
+    .chart-summary span { color: var(--muted); font-size: 10px; }
+    .chart { display: grid; height: 143px; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: end; gap: 12px; border-bottom: 1px solid var(--line); }
+    .chart-column { display: flex; height: 100%; flex-direction: column; align-items: center; justify-content: end; gap: 7px; }
+    .chart-bar-wrap { display: flex; width: 100%; height: 110px; align-items: end; justify-content: center; }
+    .chart-bar { position: relative; width: min(29px, 75%); min-height: 4px; border-radius: 6px 6px 0 0; background: #c8dfc7; transition: height .25s ease; }
+    .chart-bar.current { background: var(--green); }
+    .chart-bar[data-count]:not([data-count="0"])::before { position: absolute; top: -19px; left: 50%; color: #859186; content: attr(data-count); font-size: 9px; transform: translateX(-50%); }
+    .chart-label { padding-bottom: 7px; color: var(--muted); font-size: 9px; text-transform: capitalize; }
+    .legend { display: flex; align-items: center; gap: 7px; margin-top: 10px; color: var(--muted); font-size: 9px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .goal-content { padding: 17px 18px 18px; }
+    .goal-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+    .goal-number { font-size: 26px; font-weight: 830; letter-spacing: -1px; }
+    .goal-number span { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0; }
+    .goal-caption { margin: 2px 0 13px; color: var(--muted); font-size: 10px; }
+    .goal-badge { padding: 5px 8px; border-radius: 7px; background: var(--green-soft); color: var(--green); font-size: 9px; font-weight: 750; }
+    .progress-track { height: 8px; overflow: hidden; border-radius: 9px; background: #edf1eb; }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #64a76b, #9bc562); transition: width .25s ease; }
+    .goal-foot { display: flex; justify-content: space-between; margin-top: 8px; color: var(--muted); font-size: 9px; }
+    .impact-list { display: grid; gap: 12px; margin-top: 17px; }
+    .impact-item { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 9px; }
+    .impact-icon { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 9px; background: #f3f6f1; font-size: 14px; }
+    .impact-label { color: #68766d; font-size: 10px; }
+    .impact-value { color: var(--ink); font-size: 11px; font-weight: 760; }
+    .action-panel { margin-top: 16px; }
+    .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 12px 17px 10px; }
+    .filter-chip { min-height: 29px; padding: 0 10px; border: 1px solid var(--line); border-radius: 20px; background: white; color: #7a877d; font-size: 9px; font-weight: 700; transition: all .15s; }
+    .filter-chip.active, .filter-chip:hover { border-color: #d8e8d8; background: var(--green-soft); color: var(--green); }
+    .search-input { width: min(220px, 100%); min-height: 32px; margin-left: auto; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; outline: none; background: #fcfdfb; color: var(--ink); font-size: 10px; }
+    input:focus, select:focus, textarea:focus { border-color: #9cc4a1; outline: 3px solid rgb(46 125 82 / 10%); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 10px 14px; background: #fbfcfa; color: #9aa49c; font-size: 8px; font-weight: 800; letter-spacing: .55px; text-transform: uppercase; white-space: nowrap; }
+    td { padding: 12px 14px; border-top: 1px solid #f0f3ef; color: #66746a; font-size: 10px; vertical-align: middle; }
+    tbody tr:hover { background: #fcfdfa; }
+    .action-name { display: flex; min-width: 205px; align-items: center; gap: 9px; }
+    .action-emoji { display: grid; width: 31px; height: 31px; flex: 0 0 auto; place-items: center; border-radius: 10px; background: #f0f5eb; font-size: 15px; }
+    .action-title { color: var(--ink); font-size: 10px; font-weight: 750; }
+    .action-location { margin-top: 2px; color: #99a39b; font-size: 9px; }
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 20px; font-size: 8px; font-weight: 760; white-space: nowrap; }
+    .status::before { width: 5px; height: 5px; border-radius: 50%; background: currentColor; content: ""; }
+    .status-planejada { background: var(--blue-soft); color: var(--blue); }
+    .status-em-andamento { background: var(--amber-soft); color: var(--amber); }
+    .status-concluida { background: var(--green-soft); color: var(--green); }
+    .row-actions { display: flex; justify-content: flex-end; gap: 3px; }
+    .icon-button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: #87948a; font-size: 13px; }
+    .icon-button:hover { background: var(--green-soft); color: var(--green); }
+    .icon-button.delete:hover { background: var(--red-soft); color: var(--red); }
+    .empty-state { padding: 30px 15px; color: var(--muted); text-align: center; font-size: 11px; }
+    .empty-state strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 12px; }
+    .reports-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .report-card { padding: 17px 18px; }
+    .report-card h2 { margin: 0 0 4px; font-size: 12px; }
+    .report-card p { margin: 0 0 14px; color: var(--muted); font-size: 10px; }
+    .report-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .secondary-button { display: inline-flex; min-height: 33px; align-items: center; justify-content: center; gap: 6px; padding: 0 11px; border: 1px solid var(--line); border-radius: 8px; background: white; color: #68766d; font-size: 9px; font-weight: 720; }
+    .secondary-button:hover { border-color: #cddfcf; background: #fbfdf9; color: var(--green); }
+    .privacy-note { display: flex; align-items: flex-start; gap: 9px; padding: 12px 14px; border: 1px solid #e8eee4; border-radius: 10px; background: #fafcf8; color: var(--muted); font-size: 9px; line-height: 1.6; }
+    .privacy-note > span:first-child { flex: 0 0 auto; font-size: 13px; }
+    .privacy-note > span:last-child { min-width: 0; }
+    footer { padding: 22px 0 0; color: #9aa49c; font-size: 9px; text-align: center; }
+    dialog { width: min(570px, calc(100% - 28px)); max-height: min(92vh, 780px); padding: 0; overflow: auto; border: 1px solid var(--line); border-radius: 16px; background: white; box-shadow: 0 25px 80px rgb(25 48 32 / 22%); color: var(--ink); }
+    dialog::backdrop { background: rgb(23 39 28 / 48%); backdrop-filter: blur(3px); }
+    .dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px 15px; border-bottom: 1px solid var(--line); }
+    .dialog-header h2 { margin: 0 0 3px; font-size: 17px; letter-spacing: -.4px; }
+    .dialog-header p { margin: 0; color: var(--muted); font-size: 10px; }
+    .close-button { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 8px; background: #f5f7f4; color: #718076; font-size: 17px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; padding: 17px 22px; }
+    .field { display: grid; align-content: start; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: #637168; font-size: 10px; font-weight: 730; }
+    .field input, .field select, .field textarea { width: 100%; min-height: 37px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; outline: none; background: white; color: var(--ink); font-size: 11px; }
+    .field textarea { min-height: 72px; resize: vertical; }
+    .field-hint { color: #9aa49c; font-size: 9px; }
+    .dialog-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 13px 22px 18px; border-top: 1px solid var(--line); }
+    .toast { position: fixed; right: 22px; bottom: 20px; z-index: 10; max-width: min(390px, calc(100% - 44px)); padding: 12px 15px; border: 1px solid #dbe8d9; border-radius: 10px; background: white; box-shadow: var(--shadow); color: var(--ink); font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .2s, transform .2s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+    @media (max-width: 1080px) {
+      .sidebar { width: 216px; }
+      .main { margin-left: 216px; }
+      .topbar { padding: 0 26px; }
+      .content { padding-right: 26px; padding-left: 26px; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1.3fr) minmax(230px, .85fr); }
+      .stat-card { padding: 12px; }
+    }
+    @media (max-width: 800px) {
+      .sidebar { position: sticky; top: 0; width: 100%; height: auto; flex-direction: row; align-items: center; justify-content: space-between; padding: 10px 15px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .brand { padding: 0; }
+      .brand-mark { width: 35px; height: 35px; border-radius: 11px; font-size: 18px; }
+      .brand-name { font-size: 13px; }
+      .brand-subtitle, .nav-label, .sidebar-bottom { display: none; }
+      .nav-list { display: flex; gap: 3px; }
+      .nav-link { justify-content: center; gap: 0; padding: 9px 10px; }
+      .nav-link .nav-text { display: none; }
+      .nav-icon { width: auto; font-size: 16px; }
+      .main { margin-left: 0; }
+      .topbar { min-height: 52px; padding: 0 20px; }
+      .content { padding: 24px 20px 42px; }
+      .dashboard-grid { grid-template-columns: minmax(0, 1.35fr) minmax(225px, .9fr); }
+    }
+    @media (max-width: 620px) {
+      .sidebar { padding: 9px 12px; }
+      .nav-link { padding: 8px; }
+      .topbar { padding: 0 16px; }
+      .today-label { display: none; }
+      .content { padding: 20px 14px 35px; }
+      .page-heading { align-items: flex-start; }
+      .page-heading p { max-width: 250px; line-height: 1.5; }
+      .primary-button { min-height: 37px; padding: 0 11px; font-size: 10px; white-space: nowrap; }
+      .welcome-banner { min-height: 128px; padding: 19px; }
+      .welcome-banner h2 { max-width: 255px; font-size: 17px; }
+      .welcome-banner p { max-width: 250px; font-size: 10px; }
+      .banner-art { right: 13px; width: 60px; height: 60px; border-radius: 19px; font-size: 30px; opacity: .8; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .stat-card { min-height: 88px; }
+      .stat-value { font-size: 20px; }
+      .dashboard-grid, .reports-grid { grid-template-columns: 1fr; }
+      .dashboard-grid > div:last-child { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .dashboard-grid > div:last-child .panel + .panel { margin-top: 0; }
+      .goal-content { padding: 13px; }
+      .impact-list { gap: 8px; margin-top: 11px; }
+      .impact-item { grid-template-columns: 25px 1fr auto; gap: 6px; }
+      .impact-icon { width: 24px; height: 24px; font-size: 12px; }
+      .impact-label { font-size: 9px; }
+      .impact-value { font-size: 10px; }
+      .panel-header { padding: 14px; }
+      .filters { padding: 10px 12px; }
+      .search-input { width: 100%; margin-left: 0; }
+      th, td { padding-right: 10px; padding-left: 10px; }
+      .form-grid { grid-template-columns: 1fr; padding: 14px 17px; }
+      .field.full { grid-column: auto; }
+      .dialog-header { padding: 17px 17px 13px; }
+      .dialog-footer { padding-right: 17px; padding-left: 17px; }
+    }
+    @media (max-width: 390px) {
+      .brand-name { font-size: 12px; }
+      .sidebar { gap: 7px; }
+      .nav-list { gap: 0; }
+      .nav-link { padding: 7px; }
+      .dashboard-grid > div:last-child { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: white; }
+      .sidebar, .topbar, .page-heading .primary-button, .filters, .row-actions, .text-button, .report-actions, .toast, footer { display: none !important; }
+      .main { margin: 0; }
+      .content { width: 100%; padding: 0; }
+      .panel, .stat-card, .welcome-banner { box-shadow: none; break-inside: avoid; }
+      .dashboard-grid { grid-template-columns: 1.5fr .8fr; }
+      .action-panel { break-before: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="Raiz, início">
+        <span class="brand-mark" aria-hidden="true">♧</span>
+        <span><span class="brand-name">raiz</span><br><span class="brand-subtitle">Ações que transformam</span></span>
+      </a>
+      <div>
+        <div class="nav-label">Acompanhamento</div>
+        <nav class="nav-list">
+          <a class="nav-link active" href="#inicio"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-text">Visão geral</span></a>
+          <a class="nav-link" href="#acoes"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-text">Ações ambientais</span></a>
+          <a class="nav-link" href="#impacto"><span class="nav-icon" aria-hidden="true">✳</span><span class="nav-text">Impacto</span></a>
+          <a class="nav-link" href="#relatorios"><span class="nav-icon" aria-hidden="true">▧</span><span class="nav-text">Relatórios</span></a>
+        </nav>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="tip-card">
+          <div class="tip-icon" aria-hidden="true">🌱</div>
+          <strong>Pequenas ações, grande impacto</strong>
+          <p>Registre cada iniciativa e acompanhe o que sua comunidade está construindo.</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumb">Raiz <span aria-hidden="true">/</span> <strong>Visão geral</strong></div>
+        <div class="top-actions"><span class="today-label" id="todayLabel"></span><span class="avatar" aria-label="Perfil da comunidade">CO</span></div>
+      </header>
+
+      <div class="content" id="inicio">
+        <div class="page-heading">
+          <div><h1>Registro de ações ambientais</h1><p>Acompanhe iniciativas, mobilize pessoas e celebre cada mudança positiva.</p></div>
+          <button class="primary-button" id="addActionButton" type="button"><span aria-hidden="true">＋</span> Nova ação</button>
+        </div>
+
+        <section class="welcome-banner" aria-label="Boas-vindas">
+          <div class="welcome-copy">
+            <div class="eyebrow">Nossa comunidade em movimento</div>
+            <h2>Cuidar do planeta começa perto de você.</h2>
+            <p>Um espaço para registrar as ações, acompanhar resultados e inspirar os próximos passos.</p>
+          </div>
+          <div class="banner-art" aria-hidden="true">🌿</div>
+        </section>
+
+        <section class="stats-grid" aria-label="Indicadores ambientais">
+          <article class="stat-card">
+            <div class="stat-head"><span>Ações registradas</span><span class="stat-icon green" aria-hidden="true">♧</span></div>
+            <div class="stat-value" id="totalActions">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head"><span>Pessoas envolvidas</span><span class="stat-icon blue" aria-hidden="true">♙</span></div>
+            <div class="stat-value" id="totalPeople">0<span class="stat-note">em ações concluídas</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head"><span>Mudas plantadas</span><span class="stat-icon lime" aria-hidden="true">🌱</span></div>
+            <div class="stat-value" id="totalTrees">0<span class="stat-note">em ações concluídas</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-head"><span>Resíduos recolhidos</span><span class="stat-icon amber" aria-hidden="true">♻</span></div>
+            <div class="stat-value" id="totalWaste">0<span class="stat-note">kg · ações concluídas</span></div>
+          </article>
+        </section>
+
+        <div class="dashboard-grid">
+          <section class="panel" aria-labelledby="chartTitle">
+            <div class="panel-header"><div><h2 id="chartTitle">Ações concluídas</h2><p>Iniciativas realizadas nos últimos seis meses</p></div><span class="stat-icon green" aria-hidden="true">↗</span></div>
+            <div class="chart-wrap">
+              <div class="chart-summary"><strong id="chartTotal">0</strong><span>ações no período</span></div>
+              <div class="chart" id="activityChart" role="img" aria-label="Gráfico de ações concluídas nos últimos seis meses"></div>
+              <div class="legend"><span class="legend-dot"></span> Ações concluídas</div>
+            </div>
+          </section>
+
+          <div>
+            <section class="panel" aria-labelledby="goalTitle">
+              <div class="panel-header"><div><h2 id="goalTitle">Meta do mês</h2><p>Ações ambientais concluídas</p></div><span class="stat-icon lime" aria-hidden="true">◎</span></div>
+              <div class="goal-content">
+                <div class="goal-row"><div class="goal-number"><span id="monthlyProgress">0</span> <span>/ <span id="monthlyGoal">8</span> ações</span></div><span class="goal-badge" id="goalBadge">Vamos juntos!</span></div>
+                <p class="goal-caption" id="goalCaption">Cada ação conta para um futuro mais verde.</p>
+                <div class="progress-track" id="progressTrack" role="progressbar" aria-label="Progresso da meta mensal" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+                <div class="goal-foot"><span>Progresso do mês</span><span id="progressPercent">0%</span></div>
+              </div>
+            </section>
+
+            <section class="panel" id="impacto" aria-labelledby="impactTitle">
+              <div class="panel-header"><div><h2 id="impactTitle">Impacto realizado</h2><p>Resultados das ações concluídas</p></div></div>
+              <div class="goal-content">
+                <div class="impact-list">
+                  <div class="impact-item"><span class="impact-icon" aria-hidden="true">🌳</span><span class="impact-label">Mudas plantadas</span><span class="impact-value" id="impactTrees">0</span></div>
+                  <div class="impact-item"><span class="impact-icon" aria-hidden="true">♻️</span><span class="impact-label">Resíduos recolhidos</span><span class="impact-value" id="impactWaste">0 kg</span></div>
+                  <div class="impact-item"><span class="impact-icon" aria-hidden="true">🤝</span><span class="impact-label">Participantes</span><span class="impact-value" id="impactPeople">0</span></div>
+                  <div class="impact-item"><span class="impact-icon" aria-hidden="true">✳</span><span class="impact-label">Categorias ativas</span><span class="impact-value" id="impactCategories">0</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section class="panel action-panel" id="acoes" aria-labelledby="actionsTitle">
+          <div class="panel-header"><div><h2 id="actionsTitle">Ações ambientais</h2><p>Organize e acompanhe as iniciativas da comunidade</p></div><button class="text-button" type="button" id="exportCsvTop">Exportar lista ↗</button></div>
+          <div class="filters" aria-label="Filtros de ações">
+            <button class="filter-chip active" type="button" data-status="todas" aria-pressed="true">Todas</button>
+            <button class="filter-chip" type="button" data-status="planejada" aria-pressed="false">Planejadas</button>
+            <button class="filter-chip" type="button" data-status="em andamento" aria-pressed="false">Em andamento</button>
+            <button class="filter-chip" type="button" data-status="concluída" aria-pressed="false">Concluídas</button>
+            <label class="sr-only" for="searchInput">Buscar ação</label>
+            <input class="search-input" id="searchInput" type="search" placeholder="⌕  Buscar ação ou local..." autocomplete="off">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Ação</th><th>Categoria</th><th>Data</th><th>Participantes</th><th>Status</th><th><span class="sr-only">Opções</span></th></tr></thead>
+              <tbody id="actionsTable"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState" hidden><strong id="emptyTitle">Nenhuma ação por aqui</strong><span id="emptyMessage">Registre a primeira iniciativa da sua comunidade.</span></div>
+          </div>
+        </section>
+
+        <section class="reports-grid" id="relatorios" aria-label="Relatórios e dados">
+          <article class="panel report-card">
+            <h2>Relatórios da comunidade</h2>
+            <p>Exporte seus registros para compartilhar resultados ou guardar uma cópia.</p>
+            <div class="report-actions">
+              <button class="secondary-button" id="exportCsvButton" type="button">⇩ Baixar relatório CSV</button>
+              <button class="secondary-button" id="exportJsonButton" type="button">⇩ Fazer backup JSON</button>
+              <button class="secondary-button" id="importJsonButton" type="button">⇧ Restaurar backup</button>
+              <button class="secondary-button" id="printButton" type="button">▧ Imprimir painel</button>
+              <input class="sr-only" id="importFile" type="file" accept=".json,application/json" aria-label="Selecionar arquivo de backup JSON">
+            </div>
+          </article>
+          <article class="panel report-card">
+            <h2>Seus dados, com você</h2>
+            <p>Os registros ficam salvos neste navegador. Faça um backup para transferir ou guardar seus dados.</p>
+            <div class="privacy-note"><span aria-hidden="true">🔒</span><span>Este aplicativo funciona localmente no seu dispositivo. Seus registros não são enviados a um servidor.</span></div>
+          </article>
+        </section>
+        <footer>Feito para cuidar do que importa · Raiz</footer>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="actionDialog" aria-labelledby="dialogTitle">
+    <form id="actionForm">
+      <div class="dialog-header">
+        <div><h2 id="dialogTitle">Registrar nova ação</h2><p>Conte um pouco sobre essa iniciativa ambiental.</p></div>
+        <button class="close-button" id="closeDialog" type="button" aria-label="Fechar formulário">×</button>
+      </div>
+      <div class="form-grid">
+        <div class="field full"><label for="actionName">Nome da ação *</label><input id="actionName" name="title" type="text" maxlength="90" placeholder="Ex.: Mutirão de limpeza da praça" required></div>
+        <div class="field"><label for="category">Categoria *</label><select id="category" name="category" required>
+          <option value="Plantio">🌱 Plantio</option><option value="Limpeza">♻️ Limpeza</option><option value="Educação ambiental">📚 Educação ambiental</option><option value="Reciclagem">🔄 Reciclagem</option><option value="Conservação">🌿 Conservação</option><option value="Outra">✨ Outra</option>
+        </select></div>
+        <div class="field"><label for="actionDate">Data *</label><input id="actionDate" name="date" type="date" required></div>
+        <div class="field full"><label for="location">Local *</label><input id="location" name="location" type="text" maxlength="90" placeholder="Bairro, parque ou endereço" required></div>
+        <div class="field"><label for="status">Status *</label><select id="status" name="status" required><option value="planejada">Planejada</option><option value="em andamento">Em andamento</option><option value="concluída">Concluída</option></select></div>
+        <div class="field"><label for="participants">Participantes</label><input id="participants" name="participants" type="number" min="0" max="1000000" step="1" value="0" inputmode="numeric"></div>
+        <div class="field"><label for="trees">Mudas plantadas</label><input id="trees" name="trees" type="number" min="0" max="10000000" step="1" value="0" inputmode="numeric"></div>
+        <div class="field"><label for="waste">Resíduos recolhidos (kg)</label><input id="waste" name="waste" type="number" min="0" max="10000000" step="0.1" value="0" inputmode="decimal"></div>
+        <div class="field full"><label for="notes">Observações</label><textarea id="notes" name="notes" maxlength="500" placeholder="Detalhes, resultados ou próximos passos (opcional)"></textarea><span class="field-hint">Até 500 caracteres.</span></div>
+      </div>
+      <div class="dialog-footer"><button class="secondary-button" id="cancelDialog" type="button">Cancelar</button><button class="primary-button" id="saveActionButton" type="submit">Salvar ação</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      "use strict";
+      const STORAGE_KEY = "raiz.environmentalActions.v1";
+      const MONTHLY_GOAL = 8;
+      const categoryIcons = {
+        "Plantio": "🌱",
+        "Limpeza": "♻️",
+        "Educação ambiental": "📚",
+        "Reciclagem": "🔄",
+        "Conservação": "🌿",
+        "Outra": "✨"
+      };
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+      const localDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+      const shiftedDate = (monthsAgo, day) => {
+        const today = new Date();
+        const date = new Date(today.getFullYear(), today.getMonth() - monthsAgo, Math.min(day, new Date(today.getFullYear(), today.getMonth() - monthsAgo + 1, 0).getDate()));
+        return localDate(date);
+      };
+      const sampleActions = () => [
+        { id: "sample-1", title: "Mutirão de limpeza do parque", category: "Limpeza", date: shiftedDate(0, 8), location: "Parque das Flores", status: "concluída", participants: 24, trees: 0, waste: 38.5, notes: "Resíduos separados para reciclagem." },
+        { id: "sample-2", title: "Plantio de árvores nativas", category: "Plantio", date: shiftedDate(0, 16), location: "Praça do Ipê", status: "em andamento", participants: 12, trees: 30, waste: 0, notes: "" },
+        { id: "sample-3", title: "Oficina de compostagem doméstica", category: "Educação ambiental", date: shiftedDate(1, 12), location: "Centro Comunitário", status: "concluída", participants: 18, trees: 0, waste: 0, notes: "Atividade aberta para famílias do bairro." },
+        { id: "sample-4", title: "Coleta seletiva na feira", category: "Reciclagem", date: shiftedDate(2, 20), location: "Feira da Vila", status: "concluída", participants: 15, trees: 0, waste: 62, notes: "" },
+        { id: "sample-5", title: "Horta comunitária — preparação", category: "Conservação", date: shiftedDate(0, 27), location: "Jardim Aurora", status: "planejada", participants: 8, trees: 0, waste: 0, notes: "" },
+        { id: "sample-6", title: "Plantio no corredor verde", category: "Plantio", date: shiftedDate(4, 9), location: "Avenida Central", status: "concluída", participants: 32, trees: 45, waste: 0, notes: "Plantio de espécies nativas." }
+      ];
+      const validAction = (action) => action && typeof action === "object"
+        && typeof action.title === "string" && action.title.trim()
+        && typeof action.category === "string" && typeof action.date === "string"
+        && /^\d{4}-\d{2}-\d{2}$/.test(action.date)
+        && typeof action.location === "string" && action.location.trim()
+        && ["planejada", "em andamento", "concluída"].includes(action.status)
+        && [action.participants, action.trees, action.waste].every((value) => Number.isFinite(Number(value)) && Number(value) >= 0);
+      const readStoredActions = () => {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored === null) return sampleActions();
+          const parsed = JSON.parse(stored);
+          if (!Array.isArray(parsed) || !parsed.every(validAction)) throw new Error("Os dados salvos não estão no formato esperado.");
+          return parsed;
+        } catch (error) {
+          console.error("Não foi possível carregar os registros ambientais.", error);
+          throw new Error("Não foi possível carregar seus registros. Tente recarregar a página ou restaurar um backup válido.");
+        }
+      };
+      let actions = readStoredActions();
+      let activeFilter = "todas";
+      let editingId = null;
+      let toastTimer;
+      const byId = (id) => document.getElementById(id);
+      const dialog = byId("actionDialog");
+      const form = byId("actionForm");
+      const numberFormat = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+      const fmtNumber = (value) => numberFormat.format(value);
+      const fmtDate = (value) => new Date(`${value}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).replace(" de ", " ");
+      const completed = () => actions.filter((action) => action.status === "concluída");
+      const notify = (message) => {
+        const toast = byId("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+      };
+      const save = () => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(actions));
+        } catch (error) {
+          console.error("Não foi possível salvar os registros ambientais.", error);
+          notify("Não foi possível salvar. Verifique o espaço disponível no navegador.");
+          return false;
+        }
+        return true;
+      };
+      const monthKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      const renderChart = () => {
+        const now = new Date();
+        const months = Array.from({ length: 6 }, (_, index) => new Date(now.getFullYear(), now.getMonth() - 5 + index, 1));
+        const values = months.map((month) => completed().filter((action) => action.date.slice(0, 7) === monthKey(month)).length);
+        const max = Math.max(1, ...values);
+        byId("activityChart").innerHTML = months.map((month, index) => {
+          const height = values[index] === 0 ? 4 : Math.max(8, Math.round((values[index] / max) * 100));
+          const label = month.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
+          const fullLabel = month.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+          return `<div class="chart-column" aria-label="${escapeHtml(fullLabel)}: ${values[index]} ações"><div class="chart-bar-wrap"><div class="chart-bar${index === 5 ? " current" : ""}" data-count="${values[index]}" style="height:${height}%"></div></div><span class="chart-label">${escapeHtml(label)}</span></div>`;
+        }).join("");
+        byId("chartTotal").textContent = fmtNumber(values.reduce((sum, value) => sum + value, 0));
+      };
+      const renderGoal = () => {
+        const now = new Date();
+        const count = completed().filter((action) => action.date.slice(0, 7) === monthKey(now)).length;
+        const percent = Math.min(100, Math.round(count / MONTHLY_GOAL * 100));
+        byId("monthlyProgress").textContent = fmtNumber(count);
+        byId("monthlyGoal").textContent = fmtNumber(MONTHLY_GOAL);
+        byId("progressFill").style.width = `${percent}%`;
+        byId("progressTrack").setAttribute("aria-valuemax", String(MONTHLY_GOAL));
+        byId("progressTrack").setAttribute("aria-valuenow", String(count));
+        byId("progressPercent").textContent = `${percent}%`;
+        byId("goalBadge").textContent = count >= MONTHLY_GOAL ? "Meta alcançada!" : `${Math.max(0, MONTHLY_GOAL - count)} para a meta`;
+        byId("goalCaption").textContent = count >= MONTHLY_GOAL ? "Parabéns! A comunidade alcançou a meta deste mês." : "Cada ação conta para um futuro mais verde.";
+      };
+      const renderStats = () => {
+        const done = completed();
+        const total = (key) => done.reduce((sum, action) => sum + Number(action[key] || 0), 0);
+        const categories = new Set(done.map((action) => action.category));
+        byId("totalActions").textContent = fmtNumber(actions.length);
+        byId("totalPeople").innerHTML = `${fmtNumber(total("participants"))}<span class="stat-note">em ações concluídas</span>`;
+        byId("totalTrees").innerHTML = `${fmtNumber(total("trees"))}<span class="stat-note">em ações concluídas</span>`;
+        byId("totalWaste").innerHTML = `${fmtNumber(total("waste"))}<span class="stat-note">kg · ações concluídas</span>`;
+        byId("impactTrees").textContent = fmtNumber(total("trees"));
+        byId("impactWaste").textContent = `${fmtNumber(total("waste"))} kg`;
+        byId("impactPeople").textContent = fmtNumber(total("participants"));
+        byId("impactCategories").textContent = fmtNumber(categories.size);
+      };
+      const renderActions = () => {
+        const query = byId("searchInput").value.trim().toLocaleLowerCase("pt-BR");
+        const filtered = [...actions]
+          .filter((action) => activeFilter === "todas" || action.status === activeFilter)
+          .filter((action) => !query || `${action.title} ${action.location} ${action.category}`.toLocaleLowerCase("pt-BR").includes(query))
+          .sort((a, b) => b.date.localeCompare(a.date));
+        byId("actionsTable").innerHTML = filtered.map((action) => {
+          const statusClass = action.status === "em andamento" ? "em-andamento" : action.status === "concluída" ? "concluida" : "planejada";
+          const statusLabel = action.status.charAt(0).toLocaleUpperCase("pt-BR") + action.status.slice(1);
+          return `<tr>
+            <td><div class="action-name"><span class="action-emoji" aria-hidden="true">${categoryIcons[action.category] || "🌿"}</span><div><div class="action-title">${escapeHtml(action.title)}</div><div class="action-location">${escapeHtml(action.location)}</div></div></div></td>
+            <td>${escapeHtml(action.category)}</td><td>${escapeHtml(fmtDate(action.date))}</td><td>${fmtNumber(Number(action.participants))}</td>
+            <td><span class="status status-${statusClass}">${escapeHtml(statusLabel)}</span></td>
+            <td><div class="row-actions"><button class="icon-button" type="button" data-edit="${escapeHtml(action.id)}" aria-label="Editar ${escapeHtml(action.title)}" title="Editar">✎</button><button class="icon-button delete" type="button" data-delete="${escapeHtml(action.id)}" aria-label="Excluir ${escapeHtml(action.title)}" title="Excluir">⌫</button></div></td>
+          </tr>`;
+        }).join("");
+        byId("emptyState").hidden = filtered.length !== 0;
+        if (!filtered.length) {
+          const hasActions = actions.length > 0;
+          byId("emptyTitle").textContent = hasActions ? "Nenhuma ação encontrada" : "Nenhuma ação por aqui";
+          byId("emptyMessage").textContent = hasActions ? "Tente mudar os filtros ou os termos da busca." : "Registre a primeira iniciativa da sua comunidade.";
+        }
+      };
+      const render = () => {
+        renderStats();
+        renderChart();
+        renderGoal();
+        renderActions();
+      };
+      const resetForm = () => {
+        form.reset();
+        byId("actionDate").value = localDate(new Date());
+        byId("participants").value = "0";
+        byId("trees").value = "0";
+        byId("waste").value = "0";
+        editingId = null;
+        byId("dialogTitle").textContent = "Registrar nova ação";
+        byId("saveActionButton").textContent = "Salvar ação";
+      };
+      const openForm = (action) => {
+        resetForm();
+        if (action) {
+          editingId = action.id;
+          byId("dialogTitle").textContent = "Editar ação";
+          byId("saveActionButton").textContent = "Salvar alterações";
+          for (const [key, value] of Object.entries(action)) {
+            const input = form.elements.namedItem(key);
+            if (input) input.value = value;
+          }
+        }
+        dialog.showModal();
+        byId("actionName").focus();
+      };
+      const download = (filename, content, type) => {
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(new Blob([content], { type }));
+        link.href = url;
+        link.download = filename;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
+      const exportCsv = () => {
+        const headers = ["Ação", "Categoria", "Data", "Local", "Status", "Participantes", "Mudas plantadas", "Resíduos recolhidos (kg)", "Observações"];
+        const rows = [...actions].sort((a, b) => b.date.localeCompare(a.date)).map((action) => [
+          action.title, action.category, action.date, action.location, action.status,
+          action.participants, action.trees, action.waste, action.notes || ""
+        ]);
+        const csvValue = (value) => `"${String(value).replace(/"/g, '""')}"`;
+        const csv = "\uFEFF" + [headers, ...rows].map((row) => row.map(csvValue).join(";")).join("\r\n");
+        download(`raiz-acoes-ambientais-${localDate(new Date())}.csv`, csv, "text/csv;charset=utf-8");
+        notify("Relatório CSV exportado.");
+      };
+      byId("todayLabel").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
+      byId("addActionButton").addEventListener("click", () => openForm());
+      byId("closeDialog").addEventListener("click", () => dialog.close());
+      byId("cancelDialog").addEventListener("click", () => dialog.close());
+      byId("exportCsvTop").addEventListener("click", exportCsv);
+      byId("exportCsvButton").addEventListener("click", exportCsv);
+      byId("exportJsonButton").addEventListener("click", () => {
+        download(`raiz-backup-${localDate(new Date())}.json`, JSON.stringify({ app: "Raiz", version: 1, exportedAt: new Date().toISOString(), actions }, null, 2), "application/json");
+        notify("Backup JSON exportado.");
+      });
+      byId("importJsonButton").addEventListener("click", () => byId("importFile").click());
+      byId("importFile").addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        event.target.value = "";
+        if (!file) return;
+        try {
+          const parsed = JSON.parse(await file.text());
+          const imported = Array.isArray(parsed) ? parsed : parsed && parsed.app === "Raiz" && Array.isArray(parsed.actions) ? parsed.actions : null;
+          if (!imported || !imported.every(validAction)) throw new Error("O arquivo não contém uma lista válida de ações do Raiz.");
+          if (!window.confirm(`Restaurar ${imported.length} ação(ões)? Os registros atuais deste navegador serão substituídos.`)) return;
+          actions = imported.map((action) => ({ ...action, id: String(action.id || crypto.randomUUID()) }));
+          if (!save()) return;
+          render();
+          notify("Backup restaurado com sucesso.");
+        } catch (error) {
+          console.error("Falha ao restaurar backup ambiental.", error);
+          notify(error instanceof SyntaxError ? "O arquivo selecionado não contém JSON válido." : error.message || "Não foi possível restaurar este backup.");
+        }
+      });
+      byId("printButton").addEventListener("click", () => window.print());
+      byId("searchInput").addEventListener("input", renderActions);
+      document.querySelectorAll(".filter-chip").forEach((button) => button.addEventListener("click", () => {
+        activeFilter = button.dataset.status;
+        document.querySelectorAll(".filter-chip").forEach((chip) => {
+          const active = chip === button;
+          chip.classList.toggle("active", active);
+          chip.setAttribute("aria-pressed", String(active));
+        });
+        renderActions();
+      }));
+      byId("actionsTable").addEventListener("click", (event) => {
+        const editButton = event.target.closest("[data-edit]");
+        const deleteButton = event.target.closest("[data-delete]");
+        if (editButton) {
+          const action = actions.find((item) => item.id === editButton.dataset.edit);
+          if (action) openForm(action);
+        }
+        if (deleteButton) {
+          const action = actions.find((item) => item.id === deleteButton.dataset.delete);
+          if (action && window.confirm(`Excluir a ação "${action.title}"? Essa alteração não pode ser desfeita.`)) {
+            actions = actions.filter((item) => item.id !== action.id);
+            if (save()) {
+              render();
+              notify("Ação excluída.");
+            }
+          }
+        }
+      });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        const data = new FormData(form);
+        const action = {
+          id: editingId || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+          title: String(data.get("title")).trim(),
+          category: String(data.get("category")),
+          date: String(data.get("date")),
+          location: String(data.get("location")).trim(),
+          status: String(data.get("status")),
+          participants: Number(data.get("participants") || 0),
+          trees: Number(data.get("trees") || 0),
+          waste: Number(data.get("waste") || 0),
+          notes: String(data.get("notes") || "").trim()
+        };
+        if (!validAction(action)) {
+          notify("Confira os dados do formulário e tente novamente.");
+          return;
+        }
+        if (editingId) actions = actions.map((item) => item.id === editingId ? action : item);
+        else actions.push(action);
+        if (save()) {
+          dialog.close();
+          render();
+          notify(editingId ? "Ação atualizada." : "Ação registrada com sucesso.");
+        }
+      });
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+      document.querySelectorAll(".nav-link").forEach((link) => link.addEventListener("click", () => {
+        document.querySelectorAll(".nav-link").forEach((item) => item.classList.toggle("active", item === link));
+      }));
+      byId("progressTrack").setAttribute("aria-valuemax", String(MONTHLY_GOAL));
+      byId("actionDate").value = localDate(new Date());
+      render();
+    })();
+  </script>
+</body>
+</html>

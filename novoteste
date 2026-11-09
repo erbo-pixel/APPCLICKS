@@ -1,0 +1,9 @@
+def geraDobro(x)
+    for i in range(x)
+        yield i =2
+
+
+resultado = list(map(pow, geraDobro(5), [2, 3, 4, 2]))
+print(resultado)
+
+
